@@ -22,27 +22,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-global $wp_version;
-
-define( 'WPBITLY_VERSION', '0.2.6' );
-
+register_activation_hook( __FILE__, 'wpbitly_activate' );
 register_uninstall_hook( __FILE__, 'wpbitly_uninstall' );
 
 require( 'wp-bitly-options.php' );
 require( 'wp-bitly-views.php' );
 
-if ( ! version_compare( $wp_version, '3.0', '>=' ) )
-	require( 'deprecated.php' );
+global $wpbitly_options;
+$wpbitly_options = wpbitly_get_options();
 
+/**
+ * Load Plugin textdomain
+ */
+function wpbitly_load_textdomain() {
+	load_plugin_textdomain( 'wpbitly', false, dirname( plugin_basename( __FILE__ ) ) ); 
+}
+// Load Plugin textdomain
+add_action( 'plugins_loaded', 'wpbitly_load_textdomain' );
 
 // Load our controller class... it's helpful!
-$wpbitly = new wpbitly_options(
-	array(
-		'bitly_username' => '',
-		'bitly_api_key'  => '',
-		'post_types'     => array( 'post', 'page' ),
-	)
-);
+$wpbitly = new wpbitly_options( $wpbitly_options );
 
 
 // If we're competing with WordPress.com stats... chances are people are already using wp.me
@@ -53,9 +52,16 @@ if ( function_exists( 'wpme_shortlink_header' ) )
 	remove_action( 'wp_head', 'wpme_shortlink_wp_head' );
 }
 
+/**
+ * Add "Get Shortlink" link to menu header
+ */
+if ( $wpbitly_options['enable_admin_toolbar_shortlink'] ) {
+	add_action( 'admin_bar_menu', 'wp_admin_bar_shortlink_menu', 90 );
+}
+
 
 // Automatic generation is disabled if the API information is invalid
-if ( ! get_option( 'wpbitly_invalid' ) )
+if ( ! $wpbitly_options['wpbitly_invalid'] )
 {
 	add_action( 'save_post', 'wpbitly_generate_shortlink', 10, 1 );
 }
@@ -70,20 +76,24 @@ add_shortcode( 'wpbitly', 'wpbitly_shortcode' );
 // WordPress 3.0!
 add_filter( 'get_shortlink', 'wpbitly_get_shortlink', 10, 3 );
 
+/**
+ * The activation routine deletes unused, old options
+ */
+function wpbitly_activate() {
+
+	delete_option( 'wpbitly_invalid' );
+	delete_option( 'wpbitly_version' );
+	
+}
 
 /**
- * The deactivation routine deletes all options related to WP Bit.ly
- * This would be better off in the uninstall hook, but nothing
- * here is mission critical or hard to reactivate.
+ * The uninstall routine deletes all options related to WP Bit.ly.
  */
-
 function wpbitly_uninstall()
 {
 
 	// Delete associated options
-	delete_option( 'wpbitly_version' );
 	delete_option( 'wpbitly_options' );
-	delete_option( 'wpbitly_invalid' );
 
 	// Grab all posts
 	$posts = get_posts( 'numberposts=-1&post_type=any' );
@@ -149,7 +159,7 @@ function wpbitly_generate_shortlink( $post_id )
 
 	$post = get_post( $post_id );
 
-	if ( $post->post_status != 'publish' )
+	if ( 'publish' != $post->post_status && 'future' != $post->post_status )
 		return false;
 
 
@@ -196,7 +206,7 @@ function wpbitly_get_shortlink( $shortlink, $id, $context )
 	if ( empty( $id ) )
 	{
 		global $post;
-		$id = $post->ID;
+		$id = ( isset( $post ) ? $post->ID : null );
 	}
 
 	// Fall back in case we still don't have a post ID
@@ -282,3 +292,4 @@ function wpbitly_curl( $url )
 
 }
 
+?>
