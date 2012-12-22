@@ -327,7 +327,7 @@ class wpbitly_options
 	{
 
 		$title = __( 'WP Bit.Ly is almost ready!', 'wpbitly' );
-		$settings_link = '<a href="options-general.php?page=wpbitly">'.__( 'settings page', 'wpbitly' ).'</a>';
+		$settings_link = '<a href="options-writing.php">'.__( 'settings page', 'wpbitly' ).'</a>';
 		$message = sprintf( __( 'Please visit the %s to configure WP Bit.ly', 'wpbitly' ), $settings_link );
 
 		return $this->display_notice( "<strong>{$title}</strong> {$message}", 'error' );

@@ -4,7 +4,7 @@ Donate Link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: short, link, bitly, url, shortener, social, media, twitter
 Requires at least: 3.1
 Tested up to: 3.5
-Stable tag: 1.0
+Stable tag: 1.0.1
 
 WP Bit.ly uses the Bit.ly API to generate short links for all of your posts and pages. Statistics are displayed for each link from the dashboard.
 
@@ -62,6 +62,9 @@ If you are using WordPress 3.0 (remember to upgrade!) all you have to do is incl
 
 == Changelog ==
 
+= 1.0.1 = 
+* Bugfix
+ * Fixed bad settings page link in plugin row meta on Manage Plugins page
 = 1.0 =
 * Updated for WordPress 3.5
 * Rmoved all support for legacy backwards compatibility
@@ -85,5 +88,7 @@ If you are using WordPress 3.0 (remember to upgrade!) all you have to do is incl
 
 == Upgrade Notice ==
 
+= 1.0.1 =
+Bugfix. Fixed bad settings page link in plugin row meta on Manage Plugins page
 = 1.0 =
 Major update. Support for WordPress 3.5. Plugin settings moved to Settings -> Writing.
