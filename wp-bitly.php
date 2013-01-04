@@ -35,7 +35,7 @@ $wpbitly_options = wpbitly_get_options();
  * Load Plugin textdomain
  */
 function wpbitly_load_textdomain() {
-	load_plugin_textdomain( 'wpbitly', false, dirname( plugin_basename( __FILE__ ) ) ); 
+	load_plugin_textdomain( 'wpbitly', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/'); 
 }
 // Load Plugin textdomain
 add_action( 'plugins_loaded', 'wpbitly_load_textdomain' );
