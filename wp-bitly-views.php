@@ -43,7 +43,7 @@ function wpbitly_build_metabox( $post, $args )
 	$shortlink = $args['args'][0];
 
 	echo '<label class="screen-reader-text" for="new-tag-post_tag">WP Bit.ly</label>';
-	echo '<p style="margin-top: 8px;"><input type="text" id="wpbitly-shortlink" name="_wpbitly" size="32" autocomplete="off" value="'.$shortlink.'" style="margin-right: 4px; color: #aaa;" /></p>';
+	echo '<p style="margin-top: 8px;"><input type="text" id="wpbitly-shortlink" name="_wpbitly" size="32" autocomplete="off" value="'.$shortlink.'" style="width: 100%;margin-right: 4px; color: #aaa;" /></p>';
 
 	$url = sprintf( $wpbitly->url['clicks'], $shortlink, $wpbitly->options['bitly_username'], $wpbitly->options['bitly_api_key'] );
 	$bitly_response = wpbitly_curl( $url );
