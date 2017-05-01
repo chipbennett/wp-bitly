@@ -251,28 +251,43 @@ class WP_Bitly_Admin {
         $wpbitly = wpbitly();
         $shortlink = $args['args'][0];
 
+	    $clicks = wp_cache_get( 'bitly_clicks', 'bitly' );
 
-        // Look for a clicks response
-        $url = sprintf(wpbitly_api('link/clicks'), $wpbitly->get_option('oauth_token'), $shortlink);
-        $response = wpbitly_get($url);
+	    if ( false === $clicks ) {
+		    // Look for a clicks response
+		    $url      = sprintf( wpbitly_api( 'link/clicks' ), $wpbitly->get_option( 'oauth_token' ), $shortlink );
+		    $response = wpbitly_get( $url );
 
-        if (is_array($response))
-            $clicks = $response['data']['link_clicks'];
+		    if ( is_array( $response ) ) {
+			    $clicks = $response['data']['link_clicks'];
+			    wp_cache_set( 'bitly_clicks', $clicks, 'bitly', 30 * MINUTE_IN_SECONDS );
+		    } else {
+			    //if we don't get a good response, let stop trying for a few min
+			    wp_cache_set( 'bitly_clicks', - 1, 'bitly', MINUTE_IN_SECONDS );
+		    }
+	    }
 
+	    $refer = wp_cache_get( 'bitly_refer', 'bitly' );
 
-        // Look for referring domains metadata
-        $url = sprintf(wpbitly_api('link/refer'), $wpbitly->get_option('oauth_token'), $shortlink);
-        $response = wpbitly_get($url);
+	    if ( false === $refer ) {
+		    // Look for referring domains metadata
+		    $url      = sprintf( wpbitly_api( 'link/refer' ), $wpbitly->get_option( 'oauth_token' ), $shortlink );
+		    $response = wpbitly_get( $url );
 
-        if (is_array($response))
-            $refer = $response['data']['referring_domains'];
-
+		    if ( is_array( $response ) ) {
+			    $refer = $response['data']['referring_domains'];
+			    wp_cache_set( 'bitly_refer', $refer, 'bitly', 30 * MINUTE_IN_SECONDS );
+		    } else {
+			    //if we don't get a good response, let stop trying for a few min
+			    wp_cache_set( 'bitly_refer', - 1, 'bitly', MINUTE_IN_SECONDS );
+		    }
+	    }
 
         echo '<label class="screen-reader-text" for="new-tag-post_tag">' . esc_html__('Bitly Statistics', 'wp-bitly') . '</label>';
 
-        if (isset($clicks) && isset($refer)) {
+        if ( -1 !== $clicks && -1 !== $refer ) {
 
-            echo '<p>' . esc_html__('Global click through:', 'wp-bitly') . ' <strong>' . $clicks . '</strong></p>';
+            echo '<p>' . esc_html__('Global click through:', 'wp-bitly') . ' <strong>' . esc_html( $clicks ) . '</strong></p>';
 
             if (!empty($refer)) {
                 echo '<h4 style="padding-bottom: 3px; border-bottom: 4px solid #eee;">' . esc_html__('Your link was shared on', 'wp-bitly') . '</h4>';
