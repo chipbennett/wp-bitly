@@ -71,7 +71,6 @@ function wpbitly_api($api_call) {
  *
  * @return  bool|array      False on failure, array on success
  */
-
 function wpbitly_get($url) {
 
     $the = wp_remote_get($url, array('timeout' => '30',));
@@ -90,7 +89,6 @@ function wpbitly_get($url) {
  *
  * @return  bool|string          Returns the shortlink on success.
  */
-
 function wpbitly_generate_shortlink($post_id) {
 
     $wpbitly = wpbitly();
@@ -207,7 +205,7 @@ function wpbitly_shortlink($atts = array()) {
     $output = '';
 
     if (!empty($shortlink)) {
-        $output = apply_filters('the_shortlink', '<a rel="shortlink" href="' . esc_url($shortlink) . '" title="' . $title . '">' . $text . '</a>', $shortlink, $text, $title);
+        $output = apply_filters('the_shortlink', '<a rel="shortlink" href="' . esc_url($shortlink) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>', $shortlink, $text, $title);
         $output = $before . $output . $after;
     }
 

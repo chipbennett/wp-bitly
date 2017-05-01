@@ -84,9 +84,9 @@ class WP_Bitly_Admin {
             return;
 
 
-        $prologue = __('WP Bit.Ly is almost ready!', 'wp-bitly');
-        $link = '<a href="options-writing.php">' . __('settings page', 'wp-bitly') . '</a>';
-        $epilogue = sprintf(__('Please visit the %s to configure WP Bit.ly', 'wp-bitly'), $link);
+        $prologue = esc_html__('WP Bit.Ly is almost ready!', 'wp-bitly');
+        $link = '<a href="options-writing.php">' . esc_html__('settings page', 'wp-bitly') . '</a>';
+        $epilogue = sprintf(esc_html__('Please visit the %s to configure WP Bit.ly', 'wp-bitly'), $link);
 
         $message = apply_filters('wpbitly_setup_notice', '<div id="message" class="updated"><p>' . $prologue . ' ' . $epilogue . '</p></div>');
 
@@ -110,11 +110,11 @@ class WP_Bitly_Admin {
          * @ignore
          */
         function _f_settings_section() {
-            echo apply_filters('wpbitly_settings_section', '<p>' . __('You will need a Bitly account to use this plugin. Click the link below for your OAuth Token, and if necessary create a new account.', 'wp-bitly') . '</p>');
+            echo apply_filters('wpbitly_settings_section', '<p>' . esc_html__('You will need a Bitly account to use this plugin. Click the link below for your OAuth Token, and if necessary create a new account.', 'wp-bitly') . '</p>');
         }
 
 
-        add_settings_field('oauth_token', '<label for="oauth_token">' . __('Bitly OAuth Token', 'wpbitly') . '</label>', '_f_settings_field_oauth', 'writing', 'wpbitly_settings');
+        add_settings_field('oauth_token', '<label for="oauth_token">' . esc_html__('Bitly OAuth Token', 'wpbitly') . '</label>', '_f_settings_field_oauth', 'writing', 'wpbitly_settings');
         /**
          * @ignore
          */
@@ -125,14 +125,14 @@ class WP_Bitly_Admin {
             $url = apply_filters('wpbitly_oauth_url', 'https://bitly.com/a/wordpress_oauth_app');
 
             $auth_css = $wpbitly->get_option('authorized') ? '' : ' style="border-color: #c00; background-color: #ffecec;" ';
-            $output = '<input type="text" size="80" name="wpbitly-options[oauth_token]" value="' . esc_attr($wpbitly->get_option('oauth_token')) . '"' . $auth_css . ' />' . '<p class="description">' . __('Please provide your', 'wp-bitly') . ' <a href="' . $url . '" target="_blank" style="text-decoration: none;"> ' . __('OAuth Token', 'wp-bitly') . '</a></p>';
+            $output = '<input type="text" size="80" name="wpbitly-options[oauth_token]" value="' . esc_attr($wpbitly->get_option('oauth_token')) . '"' . $auth_css . ' />' . '<p class="description">' . esc_html__('Please provide your', 'wp-bitly') . ' <a href="' . esc_url( $url ) . '" target="_blank" style="text-decoration: none;"> ' . esc_html__('OAuth Token', 'wp-bitly') . '</a></p>';
 
             echo $output;
 
         }
 
 
-        add_settings_field('post_types', '<label for="post_types">' . __('Post Types', 'wp-bitly') . '</label>', '_f_settings_field_post_types', 'writing', 'wpbitly_settings');
+        add_settings_field('post_types', '<label for="post_types">' . esc_html__('Post Types', 'wp-bitly') . '</label>', '_f_settings_field_post_types', 'writing', 'wpbitly_settings');
         /**
          * @ignore
          */
@@ -145,17 +145,17 @@ class WP_Bitly_Admin {
 
             $current_post_types = $wpbitly->get_option('post_types');
             foreach ($post_types as $label) {
-                $output .= '<label for "' . $label . '>' . '<input type="checkbox" name="wpbitly-options[post_types][]" value="' . $label . '" ' . checked(in_array($label, $current_post_types), true, false) . '>' . $label . '</label><br>';
+                $output .= '<label for "' . esc_attr( $label ) . '>' . '<input type="checkbox" name="wpbitly-options[post_types][]" value="' . esc_attr( $label ) . '" ' . checked(in_array($label, $current_post_types), true, false) . '>' . esc_html( $label ) . '</label><br>';
             }
 
-            $output .= '<p class="description">' . __('Automatically generate shortlinks for the selected post types.', 'wp-bitly') . '</p>' . '</fieldset>';
+            $output .= '<p class="description">' . esc_html__('Automatically generate shortlinks for the selected post types.', 'wp-bitly') . '</p>' . '</fieldset>';
 
             echo $output;
 
         }
 
 
-        add_settings_field('debug', '<label for="debug">' . __('Debug WP Bitly', 'wp-bitly') . '</label>', '_f_settings_field_debug', 'writing', 'wpbitly_settings');
+        add_settings_field('debug', '<label for="debug">' . esc_html__('Debug WP Bitly', 'wp-bitly') . '</label>', '_f_settings_field_debug', 'writing', 'wpbitly_settings');
         /**
          * @ignore
          */
@@ -163,7 +163,7 @@ class WP_Bitly_Admin {
 
             $wpbitly = wpbitly();
 
-            $output = '<fieldset><legend class="screen-reader-text"><span>Debug WP Bitly</span></legend>' . '<label title="debug"><input type="checkbox" id="debug" name="wpbitly-options[debug]" value="1" ' . checked($wpbitly->get_option('debug'), 1, 0) . '><span> ' . __("Let's debug!", 'wpbitly') . '</span></label><br>' . '<p class="description">' . __("If you're having issues generating shortlinks, turn this on and create a thread in the", 'wpbitly') . ' ' . '<a href="http://wordpress.org/support/plugin/wp-bitly" title="' . __('WP Bitly support forums on WordPress.org', 'wpbitly') . '">' . __('support forums', 'wpbitly') . '</a>.</p>' . '</fieldset>';
+            $output = '<fieldset><legend class="screen-reader-text"><span>Debug WP Bitly</span></legend>' . '<label title="debug"><input type="checkbox" id="debug" name="wpbitly-options[debug]" value="1" ' . checked($wpbitly->get_option('debug'), 1, 0) . '><span> ' . esc_html__("Let's debug!", 'wpbitly') . '</span></label><br>' . '<p class="description">' . esc_html__("If you're having issues generating shortlinks, turn this on and create a thread in the", 'wpbitly') . ' ' . '<a href="http://wordpress.org/support/plugin/wp-bitly" title="' . esc_html__('WP Bitly support forums on WordPress.org', 'wpbitly') . '">' . esc_html__('support forums', 'wpbitly') . '</a>.</p>' . '</fieldset>';
 
             echo $output;
 
@@ -268,25 +268,25 @@ class WP_Bitly_Admin {
             $refer = $response['data']['referring_domains'];
 
 
-        echo '<label class="screen-reader-text" for="new-tag-post_tag">' . __('Bitly Statistics', 'wp-bitly') . '</label>';
+        echo '<label class="screen-reader-text" for="new-tag-post_tag">' . esc_html__('Bitly Statistics', 'wp-bitly') . '</label>';
 
         if (isset($clicks) && isset($refer)) {
 
-            echo '<p>' . __('Global click through:', 'wp-bitly') . ' <strong>' . $clicks . '</strong></p>';
+            echo '<p>' . esc_html__('Global click through:', 'wp-bitly') . ' <strong>' . $clicks . '</strong></p>';
 
             if (!empty($refer)) {
-                echo '<h4 style="padding-bottom: 3px; border-bottom: 4px solid #eee;">' . __('Your link was shared on', 'wp-bitly') . '</h4>';
+                echo '<h4 style="padding-bottom: 3px; border-bottom: 4px solid #eee;">' . esc_html__('Your link was shared on', 'wp-bitly') . '</h4>';
                 foreach ($refer as $domain) {
                     if (isset($domain['url'])) {
-                        printf('<a href="%1$s" target="_blank" title="%2$s">%2$s</a> (%3$d)<br>', $domain['url'], $domain['domain'], $domain['clicks']);
+                        printf('<a href="%1$s" target="_blank" title="%2$s">%2$s</a> (%3$d)<br>', esc_url( $domain['url'] ), esc_attr( $domain['domain'] ), esc_html( $domain['clicks'] ) );
                     } else {
-                        printf('<strong>%1$s</strong> (%2$d)<br>', $domain['domain'], $domain['clicks']);
+                        printf('<strong>%1$s</strong> (%2$d)<br>', esc_html( $domain['domain'] ), esc_html( $domain['clicks'] ) );
                     }
                 }
             }
 
         } else {
-            echo '<p class="error">' . __('There was a problem retrieving information about your link. There may be no statistics yet.', 'wp-bitly') . '</p>';
+            echo '<p class="error">' . esc_html__('There was a problem retrieving information about your link. There may be no statistics yet.', 'wp-bitly') . '</p>';
         }
 
     }

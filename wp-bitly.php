@@ -35,7 +35,7 @@ define('WPBITLY_DIR', WP_PLUGIN_DIR . '/' . basename(dirname(__FILE__)));
 define('WPBITLY_URL', plugins_url() . '/' . basename(dirname(__FILE__)));
 
 define('WPBITLY_LOG', WPBITLY_DIR . '/log/debug.txt');
-define('WPBITLY_ERROR', __('WP Bitly Error: No such option %1$s', 'wp-bitly'));
+define('WPBITLY_ERROR', esc_html__('WP Bitly Error: No such option %1$s', 'wp-bitly'));
 
 define('WPBITLY_BITLY_API', 'https://api-ssl.bitly.com');
 
@@ -228,7 +228,7 @@ final class WP_Bitly {
      */
     public function add_action_links($links) {
 
-        return array_merge(array('settings' => '<a href="' . admin_url('options-writing.php') . '">' . __('Settings', 'wp-bitly') . '</a>'), $links);
+        return array_merge(array('settings' => '<a href="' . esc_url( admin_url('options-writing.php') ) . '">' . esc_html__('Settings', 'wp-bitly') . '</a>'), $links);
 
     }
 
