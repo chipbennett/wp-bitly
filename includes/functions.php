@@ -145,10 +145,15 @@ function wpbitly_generate_shortlink($post_id) {
 
     wpbitly_debug_log($response, '/shorten/');
 
-    if (is_array($response)) {
-        $shortlink = $response['data']['url'];
-        update_post_meta($post_id, '_wpbitly', $shortlink);
-    }
+	if ( is_array( $response ) ) {
+		if ( isset( $response['status_code'] ) && 200 !== $response['status_code'] ) {
+			return;
+		}
+		if ( isset( $response['data']['url'] ) ) {
+			$shortlink = $response['data']['url'];
+			update_post_meta( $post_id, '_wpbitly', $shortlink );
+		}
+	}
 
     return $shortlink;
 }
