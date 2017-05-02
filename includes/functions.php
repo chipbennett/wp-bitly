@@ -15,11 +15,11 @@
  */
 function wpbitly_debug_log($towrite, $message, $bypass = true) {
 
-    $wpbitly = wpbitly();
+	$wpbitly = wpbitly();
 
-    if ( ! $wpbitly->get_option( 'debug' ) || ! $bypass ) {
-	    return;
-    }
+	if ( ! $wpbitly->get_option( 'debug' ) || ! $bypass ) {
+		return;
+	}
 
 	if ( 'direct' === get_filesystem_method() ) {
 		if ( ! WP_Filesystem( true ) ) {
@@ -34,9 +34,9 @@ function wpbitly_debug_log($towrite, $message, $bypass = true) {
 		$log = $wp_filesystem->get_contents( WPBITLY_LOG );
 		$log = $log ? $log : '';
 
-		$log .= '# [ ' . date('F j, Y, g:i a') . " ]\n";
+		$log .= '# [ ' . date( 'F j, Y, g:i a' ) . " ]\n";
 		$log .= '# [ ' . $message . " ]\n\n";
-		$log .= (is_array($towrite) ? print_r($towrite, true) : var_export($towrite, 1));
+		$log .= ( is_array( $towrite ) ? print_r( $towrite, true ) : var_export( $towrite, 1 ) );
 		$log .= "\n\n\n";
 
 		if ( ! $wp_filesystem->is_dir( dirname( WPBITLY_LOG ) ) ) {
