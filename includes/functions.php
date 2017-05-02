@@ -17,20 +17,34 @@ function wpbitly_debug_log($towrite, $message, $bypass = true) {
 
     $wpbitly = wpbitly();
 
-    if (!$wpbitly->get_option('debug') || !$bypass)
-        return;
+    if ( ! $wpbitly->get_option( 'debug' ) || ! $bypass ) {
+	    return;
+    }
 
+	if ( 'direct' === get_filesystem_method() ) {
+		if ( ! WP_Filesystem( true ) ) {
+			return;
+		}
 
-    $log = fopen(WPBITLY_LOG, 'a');
+		/**
+		 * @var $wp_filesystem WP_Filesystem_Direct
+		 */
+		global $wp_filesystem;
 
-    fwrite($log, '# [ ' . date('F j, Y, g:i a') . " ]\n");
-    fwrite($log, '# [ ' . $message . " ]\n\n");
-    // There was a reason I wanted to export vars, so despite suggestions I'm leaving this in at present.
-    fwrite($log, (is_array($towrite) ? print_r($towrite, true) : var_export($towrite, 1)));
-    fwrite($log, "\n\n\n");
+		$log = $wp_filesystem->get_contents( WPBITLY_LOG );
+		$log = $log ? $log : '';
 
-    fclose($log);
+		$log .= '# [ ' . date('F j, Y, g:i a') . " ]\n";
+		$log .= '# [ ' . $message . " ]\n\n";
+		$log .= (is_array($towrite) ? print_r($towrite, true) : var_export($towrite, 1));
+		$log .= "\n\n\n";
 
+		if ( ! $wp_filesystem->is_dir( dirname( WPBITLY_LOG ) ) ) {
+			$wp_filesystem->mkdir( dirname( WPBITLY_LOG ) );
+		}
+
+		$wp_filesystem->put_contents( WPBITLY_LOG, $log );
+	}
 }
 
 
