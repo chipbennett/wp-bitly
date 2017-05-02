@@ -251,7 +251,7 @@ class WP_Bitly_Admin {
         $wpbitly = wpbitly();
         $shortlink = $args['args'][0];
 
-	    $clicks = wp_cache_get( 'bitly_clicks', 'bitly' );
+	    $clicks = wp_cache_get( 'bitly_clicks_' . $post->ID, 'bitly' );
 
 	    if ( false === $clicks ) {
 		    // Look for a clicks response
@@ -260,14 +260,14 @@ class WP_Bitly_Admin {
 
 		    if ( is_array( $response ) ) {
 			    $clicks = $response['data']['link_clicks'];
-			    wp_cache_set( 'bitly_clicks', $clicks, 'bitly', 30 * MINUTE_IN_SECONDS );
+			    wp_cache_set( 'bitly_clicks_' . $post->ID, $clicks, 'bitly', 30 * MINUTE_IN_SECONDS );
 		    } else {
 			    //if we don't get a good response, let stop trying for a few min
-			    wp_cache_set( 'bitly_clicks', - 1, 'bitly', MINUTE_IN_SECONDS );
+			    wp_cache_set( 'bitly_clicks_' . $post->ID, - 1, 'bitly', MINUTE_IN_SECONDS );
 		    }
 	    }
 
-	    $refer = wp_cache_get( 'bitly_refer', 'bitly' );
+	    $refer = wp_cache_get( 'bitly_refer_' . $post->ID, 'bitly' );
 
 	    if ( false === $refer ) {
 		    // Look for referring domains metadata
@@ -276,10 +276,10 @@ class WP_Bitly_Admin {
 
 		    if ( is_array( $response ) ) {
 			    $refer = $response['data']['referring_domains'];
-			    wp_cache_set( 'bitly_refer', $refer, 'bitly', 30 * MINUTE_IN_SECONDS );
+			    wp_cache_set( 'bitly_refer_' . $post->ID, $refer, 'bitly', 30 * MINUTE_IN_SECONDS );
 		    } else {
 			    //if we don't get a good response, let stop trying for a few min
-			    wp_cache_set( 'bitly_refer', - 1, 'bitly', MINUTE_IN_SECONDS );
+			    wp_cache_set( 'bitly_refer_' . $post->ID, - 1, 'bitly', MINUTE_IN_SECONDS );
 		    }
 	    }
 
