@@ -15,22 +15,36 @@
  */
 function wpbitly_debug_log($towrite, $message, $bypass = true) {
 
-    $wpbitly = wpbitly();
+	$wpbitly = wpbitly();
 
-    if (!$wpbitly->get_option('debug') || !$bypass)
-        return;
+	if ( ! $wpbitly->get_option( 'debug' ) || ! $bypass ) {
+		return;
+	}
 
+	if ( 'direct' === get_filesystem_method() ) {
+		if ( ! WP_Filesystem( true ) ) {
+			return;
+		}
 
-    $log = fopen(WPBITLY_LOG, 'a');
+		/**
+		 * @var $wp_filesystem WP_Filesystem_Direct
+		 */
+		global $wp_filesystem;
 
-    fwrite($log, '# [ ' . date('F j, Y, g:i a') . " ]\n");
-    fwrite($log, '# [ ' . $message . " ]\n\n");
-    // There was a reason I wanted to export vars, so despite suggestions I'm leaving this in at present.
-    fwrite($log, (is_array($towrite) ? print_r($towrite, true) : var_export($towrite, 1)));
-    fwrite($log, "\n\n\n");
+		$log = $wp_filesystem->get_contents( WPBITLY_LOG );
+		$log = $log ? $log : '';
 
-    fclose($log);
+		$log .= '# [ ' . date( 'F j, Y, g:i a' ) . " ]\n";
+		$log .= '# [ ' . $message . " ]\n\n";
+		$log .= ( is_array( $towrite ) ? print_r( $towrite, true ) : var_export( $towrite, 1 ) );
+		$log .= "\n\n\n";
 
+		if ( ! $wp_filesystem->is_dir( dirname( WPBITLY_LOG ) ) ) {
+			$wp_filesystem->mkdir( dirname( WPBITLY_LOG ) );
+		}
+
+		$wp_filesystem->put_contents( WPBITLY_LOG, $log );
+	}
 }
 
 
@@ -71,7 +85,6 @@ function wpbitly_api($api_call) {
  *
  * @return  bool|array      False on failure, array on success
  */
-
 function wpbitly_get($url) {
 
     $the = wp_remote_get($url, array('timeout' => '30',));
@@ -90,7 +103,6 @@ function wpbitly_get($url) {
  *
  * @return  bool|string          Returns the shortlink on success.
  */
-
 function wpbitly_generate_shortlink($post_id) {
 
     $wpbitly = wpbitly();
@@ -133,10 +145,15 @@ function wpbitly_generate_shortlink($post_id) {
 
     wpbitly_debug_log($response, '/shorten/');
 
-    if (is_array($response)) {
-        $shortlink = $response['data']['url'];
-        update_post_meta($post_id, '_wpbitly', $shortlink);
-    }
+	if ( is_array( $response ) ) {
+		if ( isset( $response['status_code'] ) && 200 !== $response['status_code'] ) {
+			return;
+		}
+		if ( isset( $response['data']['url'] ) ) {
+			$shortlink = $response['data']['url'];
+			update_post_meta( $post_id, '_wpbitly', $shortlink );
+		}
+	}
 
     return $shortlink;
 }
@@ -207,7 +224,7 @@ function wpbitly_shortlink($atts = array()) {
     $output = '';
 
     if (!empty($shortlink)) {
-        $output = apply_filters('the_shortlink', '<a rel="shortlink" href="' . esc_url($shortlink) . '" title="' . $title . '">' . $text . '</a>', $shortlink, $text, $title);
+        $output = apply_filters('the_shortlink', '<a rel="shortlink" href="' . esc_url($shortlink) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>', $shortlink, $text, $title);
         $output = $before . $output . $after;
     }
 
